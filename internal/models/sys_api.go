@@ -1,6 +1,10 @@
 package models
 
-import "time"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 // API API资源模型
 type API struct {
@@ -12,9 +16,9 @@ type API struct {
 	Path      *string    `gorm:"column:path;type:varchar(512)" json:"path,omitempty"`
 	Sort      int        `gorm:"column:sort;not null;default:0;index:idx_sys_api_sort,where:deleted_at IS NULL" json:"sort"`
 	Remark    *string    `gorm:"column:remark;type:varchar(255)" json:"remark,omitempty"`
-	CreatedAt time.Time  `gorm:"column:created_at;not null;default:CURRENT_TIMESTAMP" json:"created_at"`
-	UpdatedAt *time.Time `gorm:"column:updated_at" json:"updated_at,omitempty"`
-	DeletedAt *time.Time `gorm:"column:deleted_at;index:idx_sys_api_deleted_at" json:"deleted_at,omitempty"`
+	CreatedAt time.Time      `gorm:"column:created_at;not null;default:CURRENT_TIMESTAMP" json:"created_at"`
+	UpdatedAt *time.Time     `gorm:"column:updated_at" json:"updated_at,omitempty"`
+	DeletedAt gorm.DeletedAt `gorm:"column:deleted_at;index:idx_sys_api_deleted_at" json:"deleted_at,omitempty"`
 
 	// 关联关系
 	Parent   *API    `gorm:"foreignKey:ParentID" json:"parent,omitempty"`
@@ -49,11 +53,11 @@ func (a *API) HasChildren() bool {
 
 // IsDeleted 判断是否已删除
 func (a *API) IsDeleted() bool {
-	return a.DeletedAt != nil
+	return a.DeletedAt.Valid
 }
 
-// GetMethodUpper 获取大写的HTTP方法
-func (a *API) GetMethodUpper() string {
+// GetMethod 获取大写的HTTP方法
+func (a *API) GetMethod() string {
 	if a.Method == nil {
 		return ""
 	}

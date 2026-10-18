@@ -1,6 +1,10 @@
 package models
 
-import "time"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 // Role 角色模型
 type Role struct {
@@ -11,9 +15,9 @@ type Role struct {
 	Sort      int        `gorm:"column:sort;not null;default:0;index:idx_sys_role_status,where:deleted_at IS NULL" json:"sort"`
 	Status    int16      `gorm:"column:status;type:smallint;not null;default:1" json:"status"`
 	Remark    string     `gorm:"column:remark;type:varchar(255);not null;default:''" json:"remark"`
-	CreatedAt time.Time  `gorm:"column:created_at;not null;default:CURRENT_TIMESTAMP" json:"created_at"`
-	UpdatedAt *time.Time `gorm:"column:updated_at" json:"updated_at,omitempty"`
-	DeletedAt *time.Time `gorm:"column:deleted_at;index:idx_sys_role_deleted_at" json:"deleted_at,omitempty"`
+	CreatedAt time.Time      `gorm:"column:created_at;not null;default:CURRENT_TIMESTAMP" json:"created_at"`
+	UpdatedAt *time.Time     `gorm:"column:updated_at" json:"updated_at,omitempty"`
+	DeletedAt gorm.DeletedAt `gorm:"column:deleted_at;index:idx_sys_role_deleted_at" json:"deleted_at,omitempty"`
 }
 
 // TableName 指定表名
@@ -33,7 +37,7 @@ func (r *Role) IsDisabled() bool {
 
 // IsDeleted 判断角色是否已删除
 func (r *Role) IsDeleted() bool {
-	return r.DeletedAt != nil
+	return r.DeletedAt.Valid
 }
 
 // CanModify 判断角色是否可以修改（内置角色不可修改关键字段）

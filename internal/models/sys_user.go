@@ -1,6 +1,10 @@
 package models
 
-import "time"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 // User 用户模型
 type User struct {
@@ -18,9 +22,9 @@ type User struct {
 	LastLoginIP *string    `gorm:"column:last_login_ip;type:varchar(128)" json:"last_login_ip,omitempty"`
 	LockedUntil *time.Time `gorm:"column:locked_until;index:idx_sys_user_locked_until,where:locked_until IS NOT NULL AND deleted_at IS NULL" json:"locked_until,omitempty"`
 	Remark      *string    `gorm:"column:remark;type:varchar(255)" json:"remark,omitempty"`
-	CreatedAt   time.Time  `gorm:"column:created_at;not null;default:CURRENT_TIMESTAMP" json:"created_at"`
-	UpdatedAt   *time.Time `gorm:"column:updated_at" json:"updated_at,omitempty"`
-	DeletedAt   *time.Time `gorm:"column:deleted_at;index:idx_sys_user_deleted_at" json:"deleted_at,omitempty"`
+	CreatedAt   time.Time      `gorm:"column:created_at;not null;default:CURRENT_TIMESTAMP" json:"created_at"`
+	UpdatedAt   *time.Time     `gorm:"column:updated_at" json:"updated_at,omitempty"`
+	DeletedAt   gorm.DeletedAt `gorm:"column:deleted_at;index:idx_sys_user_deleted_at" json:"deleted_at,omitempty"`
 
 	// 关联关系
 	Roles []*Role `gorm:"many2many:sys_user_role;foreignKey:ID;joinForeignKey:user_id;References:ID;joinReferences:role_id" json:"roles,omitempty"`
@@ -43,7 +47,7 @@ func (u *User) IsDisabled() bool {
 
 // IsDeleted 判断用户是否已删除
 func (u *User) IsDeleted() bool {
-	return u.DeletedAt != nil
+	return u.DeletedAt.Valid
 }
 
 // IsLocked 判断用户是否被锁定

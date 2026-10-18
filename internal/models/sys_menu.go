@@ -1,6 +1,10 @@
 package models
 
-import "time"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 // MenuType 菜单类型
 type MenuType string
@@ -32,9 +36,9 @@ type Menu struct {
 	KeepAlive           bool       `gorm:"column:keep_alive;not null;default:false" json:"keep_alive"`
 	AffixTab            bool       `gorm:"column:affix_tab;not null;default:false" json:"affix_tab"`
 	Status              int16      `gorm:"column:status;type:smallint;not null;default:1" json:"status"`
-	CreatedAt           time.Time  `gorm:"column:created_at;not null;default:CURRENT_TIMESTAMP" json:"created_at"`
-	UpdatedAt           *time.Time `gorm:"column:updated_at" json:"updated_at,omitempty"`
-	DeletedAt           *time.Time `gorm:"column:deleted_at;index:idx_sys_menu_deleted_at" json:"deleted_at,omitempty"`
+	CreatedAt           time.Time      `gorm:"column:created_at;not null;default:CURRENT_TIMESTAMP" json:"created_at"`
+	UpdatedAt           *time.Time     `gorm:"column:updated_at" json:"updated_at,omitempty"`
+	DeletedAt           gorm.DeletedAt `gorm:"column:deleted_at;index:idx_sys_menu_deleted_at" json:"deleted_at,omitempty"`
 
 	// 关联关系
 	Parent   *Menu   `gorm:"foreignKey:ParentID" json:"parent,omitempty"`
@@ -80,7 +84,7 @@ func (m *Menu) IsDisabled() bool {
 
 // IsDeleted 判断菜单是否已删除
 func (m *Menu) IsDeleted() bool {
-	return m.DeletedAt != nil
+	return m.DeletedAt.Valid
 }
 
 // IsRoot 判断是否是根节点
