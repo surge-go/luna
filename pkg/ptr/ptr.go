@@ -20,3 +20,23 @@ func FromOr[T any](p *T, def T) T {
 	}
 	return *p
 }
+
+// BoolValue 返回布尔指针的值，如果为 nil 则返回默认值。
+func BoolValue(p *bool, def bool) bool {
+	return FromOr(p, def)
+}
+
+// Int16Value 返回 int16 指针的值，如果为 nil 则返回默认值。
+func Int16Value(p *int16, def int16) int16 {
+	return FromOr(p, def)
+}
+
+// IntValue 返回 int 指针的值，如果为 nil 则返回默认值。
+func IntValue(p *int, def int) int {
+	return FromOr(p, def)
+}
+
+// StringValue 返回字符串指针的值，如果为 nil 则返回默认值。
+func StringValue(p *string, def string) string {
+	return FromOr(p, def)
+}
